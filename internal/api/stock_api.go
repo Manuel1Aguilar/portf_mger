@@ -5,17 +5,25 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"os"
 
 	"stock_tracker/internal/models"
+
+	"github.com/joho/godotenv"
 )
 
-func FetchHistoricalData(symbol, apiKey string) ([]byte, error) {
+func FetchHistoricalData(symbol string) ([]byte, error) {
+
+	err := godotenv.Load(".env")
+	if err != nil {
+		fmt.Println("Error loading .env file")
+	}
+	apiKey := os.Getenv("API_KEY")
 
 	url := fmt.Sprintf(
 		"https://www.alphavantage.co/query?function=TIME_SERIES_WEEKLY&symbol=%s&apikey=%s",
 		symbol, apiKey,
 	)
-
 	resp, err := http.Get(url)
 	if err != nil {
 		return nil, fmt.Errorf("HTTP request failed: %v", err)
@@ -28,13 +36,14 @@ func FetchHistoricalData(symbol, apiKey string) ([]byte, error) {
 
 	return responseBody, nil
 }
-func FetchStockData(symbol string) (*models.StockData, error) {
 
-	response, err := FetchHistoricalData(symbol, "apikey")
+func FetchStockData(symbol string) (*models.StockApiResponse, error) {
+
+	response, err := FetchHistoricalData(symbol)
 	if err != nil {
 		return nil, fmt.Errorf("error getting data: %w", err)
 	}
-	var stockData models.StockData
+	var stockData models.StockApiResponse
 
 	err = json.Unmarshal(response, &stockData)
 	if err != nil {
