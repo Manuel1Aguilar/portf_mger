@@ -16,9 +16,9 @@ Initially it will be a CLI. There's space to think about doing a web-page and mo
 
 ### 1. POC CLI Interaction
 - [x] Set up the project folder structure.
-- [ ] Create a basic command-line interface (CLI) to interact with the app.
-- [ ] Use the CLI to prompt user input for searching and displaying stock data.
-- [ ] Output results in the terminal.
+- [x] Create a basic command-line interface (CLI) to interact with the app.
+- [x] Use the CLI to prompt user input for searching and displaying stock data.
+- [x] Output results in the terminal.
 
 ### 2. POC Stock API Interaction
 - [ ] Research and select a stock market API (e.g., Alpha Vantage, Yahoo Finance).
