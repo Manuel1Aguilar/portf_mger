@@ -50,8 +50,8 @@ func displayHelp() {
 }
 
 func searchStock(symbol string) {
-	fmt.Printf("Searching for stock: %s...\n", symbol)
-	data, err := api.FetchStockData(symbol)
+	fmt.Printf("Getting 200 Week MA for: %s", symbol)
+	data, err := api.Get200WeekMovingAverage(symbol)
 	if err != nil {
 		fmt.Printf("Error while fetching stock %s data: %s", symbol, err)
 	}

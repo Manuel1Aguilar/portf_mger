@@ -25,11 +25,15 @@ type WeeklyTimeSeries struct {
 }
 
 func (s StockApiResponse) String() string {
-	return fmt.Sprintf("Meta Data: %s \n, WeeklyTimeSeries: %s \n", s.MetaData, s.WeeklyTimeSeries)
+	return fmt.Sprintf("Meta Data:\n %s,\n"+
+		"WeeklyTimeSeries: %d entries,\nLast Entry: \n %s",
+		s.MetaData, len(s.WeeklyTimeSeries), s.WeeklyTimeSeries[s.MetaData.LastRefreshed])
 }
 func (m MetaData) String() string {
-	return fmt.Sprintf("Info: %s, Symbol: %s, Last Refreshed: %s, Time Zone: %s", m.Info, m.Symbol, m.LastRefreshed, m.TimeZone)
+	return fmt.Sprintf("Info: %s,\n Symbol: %s,\n Last Refreshed: %s,\n Time Zone: %s",
+		m.Info, m.Symbol, m.LastRefreshed, m.TimeZone)
 }
 func (w WeeklyTimeSeries) String() string {
-	return fmt.Sprintf(" Open: %s,\n High: %s,\n Low: %s,\n Close: %s,\n Volume: %s", w.Open, w.High, w.Low, w.Close, w.Volume)
+	return fmt.Sprintf("Open: %s,\n High: %s,\n Low: %s,\n Close: %s,\n Volume: %s",
+		w.Open, w.High, w.Low, w.Close, w.Volume)
 }

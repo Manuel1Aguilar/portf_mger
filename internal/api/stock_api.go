@@ -6,6 +6,8 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"sort"
+	"strconv"
 
 	"stock_tracker/internal/models"
 
@@ -51,4 +53,50 @@ func FetchStockData(symbol string) (*models.StockApiResponse, error) {
 	}
 
 	return &stockData, nil
+}
+
+func Get200WeekMovingAverage(symbol string) (*models.MovingAverage200Weeks, error) {
+	data, err := FetchStockData(symbol)
+	if err != nil {
+		return nil, err
+	}
+
+	var dates []string
+
+	for date := range data.WeeklyTimeSeries {
+		dates = append(dates, date)
+	}
+	sort.Sort(sort.Reverse(sort.StringSlice(dates)))
+
+	count := 0
+	sum := 0.0
+	for _, date := range dates {
+		if count >= 200 {
+			break
+		}
+		closeStr := data.WeeklyTimeSeries[date].Close
+		closePrice, err := strconv.ParseFloat(closeStr, 64)
+		if err != nil {
+			fmt.Printf("Error parsing close price: %s", closeStr)
+			continue
+		}
+
+		sum += closePrice
+		count++
+	}
+
+	currentValueStr := data.WeeklyTimeSeries[dates[0]].Close
+	currentValue, err := strconv.ParseFloat(currentValueStr, 64)
+	if err != nil {
+		fmt.Printf("Error while parsing closing value: %s \n", currentValueStr)
+	}
+	ma := sum / float64(count)
+	res := &models.MovingAverage200Weeks{
+		Stock:     symbol,
+		Value:     ma,
+		From:      dates[199],
+		To:        dates[0],
+		CurrValue: currentValue,
+	}
+	return res, nil
 }
