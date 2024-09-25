@@ -9,6 +9,7 @@ import (
 	"sort"
 	"strconv"
 
+	"stock_tracker/internal/config"
 	"stock_tracker/internal/models"
 
 	"github.com/joho/godotenv"
@@ -23,8 +24,8 @@ func FetchHistoricalData(symbol string) ([]byte, error) {
 	apiKey := os.Getenv("API_KEY")
 
 	url := fmt.Sprintf(
-		"https://www.alphavantage.co/query?function=TIME_SERIES_WEEKLY&symbol=%s&apikey=%s",
-		symbol, apiKey,
+		"%s?function=TIME_SERIES_WEEKLY&symbol=%s&apikey=%s",
+		config.AlphaVantageAPIBaseUrl, symbol, apiKey,
 	)
 	resp, err := http.Get(url)
 	if err != nil {
