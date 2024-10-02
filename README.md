@@ -12,4 +12,3 @@ So the functionalities are:
 - Save stock buys/sells. Keep record of the portfolio
 
 Initially it will be a CLI. There's space to think about doing a web-page and mobile app from this.
-
