@@ -28,7 +28,7 @@ Initially it will be a CLI. There's space to think about doing a web-page and mo
 ### 3. Search Stocks
 - [x] Implement a function to search for a specific stock by its symbol.
 - [x] Display the stock’s current data (price, volume, etc.) in the terminal.
-- [ ] Save the stock data locally using SQLite.
+- [x] Save the stock data locally using SQLite.
 
 ### 4. Calculate 200 MA
 - [x] Write a function to calculate the 200-week moving average (MA) for a stock.
@@ -47,6 +47,5 @@ Initially it will be a CLI. There's space to think about doing a web-page and mo
 ### Future Improvements:
 - [ ] Add GUI interface options (after completing the terminal interface).
 - [ ] Implement more advanced stock analysis features (like other moving averages or indicators).
-- [ ] Consider integrating a more robust database (PostgreSQL) as the app scales.
 
 
