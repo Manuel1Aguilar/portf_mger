@@ -21,17 +21,17 @@ Initially it will be a CLI. There's space to think about doing a web-page and mo
 - [x] Output results in the terminal.
 
 ### 2. POC Stock API Interaction
-- [ ] Research and select a stock market API (e.g., Alpha Vantage, Yahoo Finance).
-- [ ] Write a function to fetch stock data from the selected API.
-- [ ] Parse the response and extract relevant data (e.g., historical stock prices).
+- [x] Research and select a stock market API (e.g., Alpha Vantage, Yahoo Finance).
+- [x] Write a function to fetch stock data from the selected API.
+- [x] Parse the response and extract relevant data (e.g., historical stock prices).
 
 ### 3. Search Stocks
-- [ ] Implement a function to search for a specific stock by its symbol.
-- [ ] Display the stock’s current data (price, volume, etc.) in the terminal.
+- [x] Implement a function to search for a specific stock by its symbol.
+- [x] Display the stock’s current data (price, volume, etc.) in the terminal.
 - [ ] Save the stock data locally using SQLite.
 
 ### 4. Calculate 200 MA
-- [ ] Write a function to calculate the 200-week moving average (MA) for a stock.
+- [x] Write a function to calculate the 200-week moving average (MA) for a stock.
 - [ ] Display the 200 MA value for a searched stock.
 - [ ] Flag stocks that are near or below their 200 MA for buying opportunities.
 

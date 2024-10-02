@@ -16,15 +16,12 @@ func InitializeSQLite(dbPath string) (*sql.DB, error) {
 		return nil, err
 	}
 
+	// Check if the database connection is alive
+	if err = db.Ping(); err != nil {
+		return nil, err
+	}
+
 	DB = db
+	log.Println("Database connection initialized.")
 	return db, nil
-}
-
-// RunMigrations runs the migrations using golang-migrate
-func RunMigrations() {
-	log.Println("Running database migrations...")
-
-	// Add migrations logic
-
-	log.Println("Migrations completed succesfully")
 }
