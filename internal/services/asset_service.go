@@ -48,7 +48,7 @@ func (s *AssetService) CreateAsset(asset *models.Asset) error {
 // GetAssetBySymbol retrieves the asset by symbol.
 func (s *AssetService) GetAssetBySymbol(symbol string) (*models.Asset, error) {
 	query := `SELECT a.id, a.symbol, a.description, a.asset_type FROM asset a
-              WHERE ss.symbol = ?`
+              WHERE a.symbol = ?`
 	log.Printf("Query: %s", query)
 	row := s.DB.QueryRow(query, symbol)
 
