@@ -9,8 +9,8 @@ import (
 	"sort"
 	"strconv"
 
-	"stock_tracker/internal/config"
-	"stock_tracker/internal/models"
+	"github.com/Manuel1Aguilar/portf_mger/internal/config"
+	"github.com/Manuel1Aguilar/portf_mger/internal/models"
 
 	"github.com/joho/godotenv"
 )
@@ -24,7 +24,7 @@ func FetchHistoricalData(symbol string) ([]byte, error) {
 	apiKey := os.Getenv("API_KEY")
 
 	url := fmt.Sprintf(
-		"%s?function=TIME_SERIES_WEEKLY&symbol=%s&apikey=%s",
+		"%s?function=TIME_SERIES_WEEKLY_ADJUSTED&symbol=%s&apikey=%s",
 		config.AlphaVantageAPIBaseUrl, symbol, apiKey,
 	)
 	resp, err := http.Get(url)
@@ -40,13 +40,13 @@ func FetchHistoricalData(symbol string) ([]byte, error) {
 	return responseBody, nil
 }
 
-func FetchStockData(symbol string) (*models.StockApiResponse, error) {
+func FetchStockData(symbol string) (*models.StockApiResponseAdjusted, error) {
 
 	response, err := FetchHistoricalData(symbol)
 	if err != nil {
 		return nil, fmt.Errorf("error getting data: %w", err)
 	}
-	var stockData models.StockApiResponse
+	var stockData models.StockApiResponseAdjusted
 
 	err = json.Unmarshal(response, &stockData)
 	if err != nil {
@@ -64,7 +64,7 @@ func Get200WeekMovingAverage(symbol string) (*models.MovingAverage200Weeks, erro
 
 	var dates []string
 
-	for date := range data.WeeklyTimeSeries {
+	for date := range data.WeeklyTimeSeriesAdjusted {
 		dates = append(dates, date)
 	}
 	sort.Sort(sort.Reverse(sort.StringSlice(dates)))
@@ -75,7 +75,7 @@ func Get200WeekMovingAverage(symbol string) (*models.MovingAverage200Weeks, erro
 		if count >= 200 {
 			break
 		}
-		closeStr := data.WeeklyTimeSeries[date].Close
+		closeStr := data.WeeklyTimeSeriesAdjusted[date].AdjustedClose
 		closePrice, err := strconv.ParseFloat(closeStr, 64)
 		if err != nil {
 			fmt.Printf("Error parsing close price: %s", closeStr)
@@ -86,7 +86,7 @@ func Get200WeekMovingAverage(symbol string) (*models.MovingAverage200Weeks, erro
 		count++
 	}
 
-	currentValueStr := data.WeeklyTimeSeries[dates[0]].Close
+	currentValueStr := data.WeeklyTimeSeriesAdjusted[dates[0]].AdjustedClose
 	currentValue, err := strconv.ParseFloat(currentValueStr, 64)
 	if err != nil {
 		fmt.Printf("Error while parsing closing value: %s \n", currentValueStr)
@@ -94,7 +94,7 @@ func Get200WeekMovingAverage(symbol string) (*models.MovingAverage200Weeks, erro
 	ma := sum / float64(count)
 	res := &models.MovingAverage200Weeks{
 		Stock:     symbol,
-		Value:     ma,
+		MAValue:   ma,
 		From:      dates[199],
 		To:        dates[0],
 		CurrValue: currentValue,

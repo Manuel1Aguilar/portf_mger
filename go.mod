@@ -1,4 +1,4 @@
-module stock_tracker
+module github.com/Manuel1Aguilar/portf_mger
 
 go 1.23.0
 

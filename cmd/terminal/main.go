@@ -3,11 +3,12 @@ package main
 import (
 	"log"
 
-	"stock_tracker/internal/app"
-	"stock_tracker/internal/commands"
+	"github.com/Manuel1Aguilar/portf_mger/internal/app"
+	"github.com/Manuel1Aguilar/portf_mger/internal/commands"
 )
 
 func main() {
+
 	// Initialize the app
 	application, err := app.NewApp()
 	if err != nil {

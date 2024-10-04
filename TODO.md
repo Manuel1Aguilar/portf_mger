@@ -14,11 +14,11 @@
 ### 3. Search Stocks
 - [x] Implement a function to search for a specific stock by its symbol.
 - [x] Display the stock’s current data (price, volume, etc.) in the terminal.
-- [ ] Save the stock data locally using SQLite.
+- [x] Save the stock data locally using SQLite.
 
 ### 4. Calculate 200 MA
 - [x] Write a function to calculate the 200-week moving average (MA) for a stock.
-- [ ] Display the 200 MA value for a searched stock.
+- [x] Display the 200 MA value for a searched stock.
 - [ ] Flag stocks that are near or below their 200 MA for buying opportunities.
 
 ### 5. Add Tasks
@@ -33,6 +33,12 @@
 ### Future Improvements:
 - [ ] Add GUI interface options (after completing the terminal interface).
 - [ ] Implement more advanced stock analysis features (like other moving averages or indicators).
-- [ ] Consider integrating a more robust database (PostgreSQL) as the app scales.
+- [ ] Add crypto support
+- [ ] Define tolerances for buying on MA
 
-
+### commands to do:
+- [ ] See portfolio
+- [ ] See portfolio progression
+- [ ] Create transaction
+- [ ] Add portfolio objective
+- [ ] Save/See metric types

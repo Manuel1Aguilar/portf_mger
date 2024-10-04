@@ -4,7 +4,8 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
-	"stock_tracker/internal/models"
+
+	"github.com/Manuel1Aguilar/portf_mger/internal/models"
 )
 
 // Asset Service provides business logic for managing stock data

@@ -4,8 +4,9 @@ import (
 	"fmt"
 	"os"
 
-	"stock_tracker/internal/app"
-	"stock_tracker/internal/models"
+	"github.com/Manuel1Aguilar/portf_mger/internal/api"
+	"github.com/Manuel1Aguilar/portf_mger/internal/app"
+	"github.com/Manuel1Aguilar/portf_mger/internal/models"
 )
 
 func HandleCommand(application *app.App) {
@@ -50,6 +51,7 @@ func HandleCommand(application *app.App) {
 	case "get-asset":
 		if len(os.Args) < 3 {
 			fmt.Println("Example usage: get-asset <symbol>")
+			return
 		}
 		symbol := os.Args[2]
 		asset, err := application.AssetService.GetAssetBySymbol(symbol)
@@ -58,6 +60,18 @@ func HandleCommand(application *app.App) {
 		}
 		fmt.Printf("Asset for %s:\n", symbol)
 		fmt.Println(asset)
+	case "search-stock":
+		if len(os.Args) < 3 {
+			fmt.Println("Example usage: search-stock <symbol>")
+			return
+		}
+
+		symbol := os.Args[2]
+		ma, err := api.Get200WeekMovingAverage(symbol)
+		if err != nil {
+			fmt.Printf("Error getting 200w MA: %v\n", err)
+		}
+		fmt.Printf("%v\n", ma)
 	default:
 		fmt.Println("Command not found")
 	}

@@ -3,8 +3,9 @@ package app
 import (
 	"database/sql"
 	"log"
-	"stock_tracker/internal/db"
-	"stock_tracker/internal/services"
+
+	"github.com/Manuel1Aguilar/portf_mger/internal/db"
+	"github.com/Manuel1Aguilar/portf_mger/internal/services"
 )
 
 type App struct {
