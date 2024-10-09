@@ -55,17 +55,17 @@ func (ao AssetObjective) String() string {
 		ao.ID, ao.AssetID, ao.TargetAllocationPercentage)
 }
 
-// PortfolioEntry model
-type PortfolioEntry struct {
-	ID              int     `json:"id" db:"id"`
-	AssetID         int     `json:"asset_id" db:"asset_id"` // Foreign key to Asset table
-	UnitsHeld       float64 `json:"units_held" db:"units_held"`
-	CurrentPosition float64 `json:"current_position" db:"current_position"`
+// PortfolioHolding model
+type PortfolioHolding struct {
+	ID        int     `json:"id" db:"id"`
+	AssetID   int     `json:"asset_id" db:"asset_id"` // Foreign key to Asset table
+	UnitsHeld float64 `json:"units_held" db:"units_held"`
+	UsdValue  float64 `json:"usd_value" db:"usd_value"`
 }
 
-func (pe PortfolioEntry) String() string {
-	return fmt.Sprintf("PortfolioEntry[ID: %d, AssetID: %d, UnitsHeld: %.2f, CurrentPosition: %.2f]",
-		pe.ID, pe.AssetID, pe.UnitsHeld, pe.CurrentPosition)
+func (pe PortfolioHolding) String() string {
+	return fmt.Sprintf("PortfolioHolding[ID: %d, AssetID: %d, UnitsHeld: %.2f, USDValue: %.2f]",
+		pe.ID, pe.AssetID, pe.UnitsHeld, pe.UsdValue)
 }
 
 // AssetTransaction model

@@ -3,6 +3,7 @@ package commands
 import (
 	"fmt"
 	"os"
+	"strconv"
 
 	"github.com/Manuel1Aguilar/portf_mger/internal/api"
 	"github.com/Manuel1Aguilar/portf_mger/internal/app"
@@ -72,6 +73,28 @@ func HandleCommand(application *app.App) {
 			fmt.Printf("Error getting 200w MA: %v\n", err)
 		}
 		fmt.Printf("%v\n", ma)
+	case "new-objective":
+		if len(os.Args) < 4 {
+			fmt.Println("Example usage: new-objective <symbol> <target allocation %>")
+			return
+		}
+		symbol := os.Args[2]
+		taoc := os.Args[3]
+
+		taocVal, err := strconv.ParseFloat(taoc, 64)
+		if err != nil {
+			fmt.Printf("Error parsing target allocation percentage (It has to be a number): %v", err)
+			return
+		}
+		createModel := &models.AssetObjectiveCreate{
+			Symbol:                     symbol,
+			TargetAllocationPercentage: taocVal,
+		}
+		err = application.AssetObjectiveService.CreateAssetObjective(createModel)
+		if err != nil {
+			fmt.Printf("Error creating asset objective: %v", err)
+			return
+		}
 	default:
 		fmt.Println("Command not found")
 	}

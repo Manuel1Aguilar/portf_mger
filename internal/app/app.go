@@ -9,8 +9,9 @@ import (
 )
 
 type App struct {
-	AssetService *services.AssetService
-	DB           *sql.DB
+	AssetService          *services.AssetService
+	AssetObjectiveService *services.AssetObjectiveService
+	DB                    *sql.DB
 }
 
 func NewApp() (*App, error) {
@@ -27,10 +28,12 @@ func NewApp() (*App, error) {
 
 	//Initialize services
 	stockService := services.NewAssetService(database)
+	assetObjectiveService := services.NewAssetObjectiveService(database)
 
 	return &App{
-		AssetService: stockService,
-		DB:           database,
+		AssetService:          stockService,
+		AssetObjectiveService: assetObjectiveService,
+		DB:                    database,
 	}, nil
 }
 
