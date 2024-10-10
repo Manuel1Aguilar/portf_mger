@@ -50,3 +50,6 @@ debug/
 
 # Local .env files (if using environment variables)
 .env
+
+# Portfolio database
+portfolio.db

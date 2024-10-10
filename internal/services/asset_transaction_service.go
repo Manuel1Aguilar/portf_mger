@@ -21,8 +21,20 @@ func NewAssetTransactionService(db *sql.DB, portfolioHoldingService *PortfolioHo
 	}
 }
 
-// CreateAsssetTransaction inserts a new AssetTransaction into the database
-func (s *AssetTransactionService) CreateAssetTransaction(transaction *models.AssetTransaction) error {
+// Add inserts a new AssetTransaction into the database using a db transaction
+func (s *AssetTransactionService) AddWithTx(tx *sql.Tx, transaction *models.AssetTransaction) error {
+	query := `INSERT INTO asset_transaction(asset_id, transaction_type, valueUSD, units, unit_price, date_transacted)
+				VALUES	(?, ?, ?, ?, ?, ?)`
+	_, err := tx.Exec(query, transaction.AssetID, transaction.TransactionType, transaction.ValueUSD, transaction.Units,
+		transaction.UnitPrice, transaction.DateTransacted)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// Add inserts a new AssetTransaction into the database
+func (s *AssetTransactionService) Add(transaction *models.AssetTransaction) error {
 	query := `INSERT INTO asset_transaction(asset_id, transaction_type, valueUSD, units, unit_price, date_transacted)
 				VALUES	(?, ?, ?, ?, ?, ?)`
 	_, err := s.DB.Exec(query, transaction.AssetID, transaction.TransactionType, transaction.ValueUSD, transaction.Units,
@@ -79,22 +91,38 @@ func (s *AssetTransactionService) SaveAssetTransaction(
 		// Rollback transaction
 		return err
 	}
+	tx, err := s.DB.Begin()
+	if err != nil {
+		log.Printf("Error starting transaction: %v \n", err)
+	}
+
+	defer func() {
+		if p := recover(); p != nil {
+			tx.Rollback()
+			log.Printf("Transaction panicked, rolling back: %v \n", p)
+		} else if err != nil {
+			tx.Rollback()
+			log.Printf("Error in transaction, rolling back: %v \n", err)
+		} else {
+			err = tx.Commit()
+			if err != nil {
+				log.Printf("Error commiting transaction: %v \n", err)
+			}
+		}
+	}()
 
 	// Insert the transaction
-	err = s.CreateAssetTransaction(transaction)
+	err = s.AddWithTx(tx, transaction)
 	if err != nil {
 		log.Printf("Error inserting the transaction: %v", err)
-		// Rollback transaction
 		return err
 	}
 
 	// Let the portfolio service know
-	err = s.PortfolioHoldingService.FinishTransaction(transaction)
+	err = s.PortfolioHoldingService.FinishTransactionWithTx(tx, transaction)
 	if err != nil {
 		log.Printf("Error updating the portfolio holdings: %v \n", err)
-		// Rollback transaction
 		return err
 	}
-	// Commit transaction
 	return nil
 }
