@@ -20,83 +20,117 @@ func HandleCommand(application *app.App) {
 
 	switch command {
 	case "add-asset":
-		if len(os.Args) < 3 {
-			fmt.Println("Example usage: add-asset <symbol> <description> <type> ; Types: CRYPTO / STOCK")
-			return
-		}
-
-		symbol := os.Args[2]
-		description := os.Args[3]
-		aType := os.Args[4]
-
-		if aType != "CRYPTO" && aType != "STOCK" {
-			fmt.Printf("Asset type has to be either CRYPTO or STOCK. Provided: %s \n", aType)
-			return
-		}
-
-		asset := &models.Asset{
-			Symbol:      symbol,
-			Description: description,
-			AssetType:   aType,
-		}
-
-		err := application.AssetService.CreateAsset(asset)
+		err := addAsset(application)
 		if err != nil {
-			fmt.Printf("Error creating new asset: %v\n", err)
+			fmt.Println(err)
 			return
 		}
-
-		fmt.Printf("Succesfully added asset: %s \n", symbol)
-
-		fmt.Println(asset)
 	case "get-asset":
-		if len(os.Args) < 3 {
-			fmt.Println("Example usage: get-asset <symbol>")
+		err := getAsset(application)
+		if err != nil {
+			fmt.Println(err)
 			return
 		}
-		symbol := os.Args[2]
-		asset, err := application.AssetService.GetAssetBySymbol(symbol)
-		if err != nil {
-			fmt.Printf("Error executing get-asset command: %v", err)
-		}
-		fmt.Printf("Asset for %s:\n", symbol)
-		fmt.Println(asset)
 	case "search-stock":
-		if len(os.Args) < 3 {
-			fmt.Println("Example usage: search-stock <symbol>")
+		err := searchStock()
+		if err != nil {
+			fmt.Println(err)
 			return
 		}
-
-		symbol := os.Args[2]
-		ma, err := api.Get200WeekMovingAverage(symbol)
-		if err != nil {
-			fmt.Printf("Error getting 200w MA: %v\n", err)
-		}
-		fmt.Printf("%v\n", ma)
 	case "new-objective":
-		if len(os.Args) < 4 {
-			fmt.Println("Example usage: new-objective <symbol> <target allocation %>")
-			return
-		}
-		symbol := os.Args[2]
-		taoc := os.Args[3]
-
-		taocVal, err := strconv.ParseFloat(taoc, 64)
+		err := newObjective(application)
 		if err != nil {
-			fmt.Printf("Error parsing target allocation percentage (It has to be a number): %v", err)
+			fmt.Println(err)
 			return
 		}
-		createModel := &models.AssetObjectiveCreate{
-			Symbol:                     symbol,
-			TargetAllocationPercentage: taocVal,
-		}
-		err = application.AssetObjectiveService.CreateAssetObjective(createModel)
-		if err != nil {
-			fmt.Printf("Error creating asset objective: %v", err)
-			return
-		}
+	case "transact":
+		// TODO
+	case "pfolio-status":
+		// TODO
+	case "raise-flags":
+		// TODO
 	default:
 		fmt.Println("Command not found")
 	}
 
+}
+
+func addAsset(application *app.App) error {
+	if len(os.Args) < 3 {
+		return fmt.Errorf("Example usage: add-asset <symbol> <description> <type> ; Types: CRYPTO / STOCK")
+	}
+
+	symbol := os.Args[2]
+	description := os.Args[3]
+	aType := os.Args[4]
+
+	if aType != "CRYPTO" && aType != "STOCK" {
+		return fmt.Errorf("Asset type has to be either CRYPTO or STOCK. Provided: %s \n", aType)
+	}
+
+	asset := &models.Asset{
+		Symbol:      symbol,
+		Description: description,
+		AssetType:   aType,
+	}
+
+	err := application.AssetService.CreateAsset(asset)
+	if err != nil {
+		return fmt.Errorf("Error creating new asset: %v\n", err)
+	}
+
+	fmt.Printf("Succesfully added asset: %s \n", symbol)
+
+	fmt.Println(asset)
+
+	return nil
+}
+func getAsset(application *app.App) error {
+	if len(os.Args) < 3 {
+		return fmt.Errorf("Example usage: get-asset <symbol>")
+	}
+	symbol := os.Args[2]
+	asset, err := application.AssetService.GetAssetBySymbol(symbol)
+	if err != nil {
+		return fmt.Errorf("Error executing get-asset command: %v", err)
+	}
+	fmt.Printf("Asset for %s:\n", symbol)
+	fmt.Println(asset)
+	return nil
+}
+
+func searchStock() error {
+	if len(os.Args) < 3 {
+		return fmt.Errorf("Example usage: search-stock <symbol>")
+	}
+
+	symbol := os.Args[2]
+	ma, err := api.Get200WeekMovingAverage(symbol)
+	if err != nil {
+		return fmt.Errorf("Error getting 200w MA: %v\n", err)
+	}
+	fmt.Printf("%v\n", ma)
+	return nil
+}
+
+func newObjective(application *app.App) error {
+	if len(os.Args) < 4 {
+		return fmt.Errorf("Example usage: new-objective <symbol> <target allocation %%>")
+	}
+	symbol := os.Args[2]
+	taoc := os.Args[3]
+
+	taocVal, err := strconv.ParseFloat(taoc, 64)
+	if err != nil {
+		return fmt.Errorf("Error parsing target allocation percentage (It has to be a number): %v", err)
+	}
+	createModel := &models.AssetObjectiveCreate{
+		Symbol:                     symbol,
+		TargetAllocationPercentage: taocVal,
+	}
+	err = application.AssetObjectiveService.CreateAssetObjective(createModel)
+	if err != nil {
+		return fmt.Errorf("Error creating asset objective: %v", err)
+	}
+	return nil
 }
