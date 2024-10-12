@@ -9,7 +9,6 @@ import (
 	"sort"
 	"strconv"
 
-	"github.com/Manuel1Aguilar/portf_mger/internal/config"
 	"github.com/Manuel1Aguilar/portf_mger/internal/models"
 
 	"github.com/joho/godotenv"
@@ -25,7 +24,7 @@ func FetchHistoricalData(symbol string) ([]byte, error) {
 
 	url := fmt.Sprintf(
 		"%s?function=TIME_SERIES_WEEKLY_ADJUSTED&symbol=%s&apikey=%s",
-		config.AlphaVantageAPIBaseUrl, symbol, apiKey,
+		models.AlphaVantageAPIBaseUrl, symbol, apiKey,
 	)
 	resp, err := http.Get(url)
 	if err != nil {
