@@ -4,7 +4,7 @@ import (
 	"fmt"
 )
 
-type StockApiResponseAdjusted struct {
+type WeeklyAdjustedResponse struct {
 	MetaData                 MetaData                            `json:"Meta Data"`
 	WeeklyTimeSeriesAdjusted map[string]WeeklyTimeSeriesAdjusted `json:"Weekly Adjusted Time Series"`
 }
@@ -33,7 +33,27 @@ type WeeklyTimeSeries struct {
 	Volume string `json:"5. volume"`
 }
 
-func (s StockApiResponseAdjusted) String() string {
+type GlobalQuote struct {
+	Symbol           string `json:"01. symbol"`
+	Open             string `json:"02. open"`
+	High             string `json:"03. high"`
+	Low              string `json:"04. low"`
+	Price            string `json:"05. price"`
+	Volume           string `json:"06. volume"`
+	LatestTradingDay string `json:"07. latest trading day"`
+	PreviousClose    string `json:"08. previous close"`
+	Change           string `json:"09. change"`
+	ChangePercent    string `json:"10. change percent"`
+}
+
+func (gq GlobalQuote) String() string {
+	return fmt.Sprintf("GlobalQuote:\nSymbol: %s,\nOpen: %s,\nHigh: %s,\nLow: %s,\nPrice: %s,\n"+
+		"Volume: %s,\nLatestTradingDay: %s,\nPreviousClose: %s,\nChange: %s,\nChangePercent: %s",
+		gq.Symbol, gq.Open, gq.High, gq.Low, gq.Price, gq.Volume, gq.LatestTradingDay, gq.PreviousClose,
+		gq.Change, gq.ChangePercent)
+}
+
+func (s WeeklyAdjustedResponse) String() string {
 	return fmt.Sprintf("Meta Data:\n %s,\n"+
 		"WeeklyTimeSeriesAdjusted: %d entries,\nLast Entry: \n %s",
 		s.MetaData, len(s.WeeklyTimeSeriesAdjusted), s.WeeklyTimeSeriesAdjusted[s.MetaData.LastRefreshed])

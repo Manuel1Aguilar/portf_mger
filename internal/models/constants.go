@@ -5,6 +5,8 @@ const (
 	TransactionTypeBuy  = "BUY"
 	TransactionTypeSell = "SELL"
 
-	// API Url for stock data
-	AlphaVantageAPIBaseUrl = "https://www.alphavantage.co/query"
+	// Alpha vantage constants
+	AVBaseURL                = "https://www.alphavantage.co/query"
+	AVWeeklyAdjustedEndpoint = "TIME_SERIES_WEEKLY_ADJUSTED"
+	AVLatestValueEndpoint    = "LATEST_VALUE"
 )

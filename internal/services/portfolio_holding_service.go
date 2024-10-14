@@ -2,7 +2,9 @@ package services
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
+	"time"
 
 	"github.com/Manuel1Aguilar/portf_mger/internal/models"
 )
@@ -29,13 +31,15 @@ func (s *PortfolioHoldingService) FinishTransactionWithTx(tx *sql.Tx, tModel *mo
 		if err != nil {
 			return err
 		}
+		//TODO update holding value
 		if tModel.TransactionType == models.TransactionTypeBuy {
 			holding.UnitsHeld += tModel.Units
-			holding.UsdValue += tModel.ValueUSD
+			holding.USDValue += tModel.ValueUSD
 		} else {
 			holding.UnitsHeld -= tModel.Units
-			holding.UsdValue -= tModel.ValueUSD
+			holding.USDValue -= tModel.ValueUSD
 		}
+		holding.LastUpdated = time.Now()
 		err = s.UpdateWithTx(tx, holding)
 		if err != nil {
 			return err
@@ -45,9 +49,10 @@ func (s *PortfolioHoldingService) FinishTransactionWithTx(tx *sql.Tx, tModel *mo
 	}
 	// if not created
 	holding := &models.PortfolioHolding{
-		AssetID:   tModel.AssetID,
-		UnitsHeld: tModel.Units,
-		UsdValue:  tModel.ValueUSD,
+		AssetID:     tModel.AssetID,
+		UnitsHeld:   tModel.Units,
+		USDValue:    tModel.ValueUSD,
+		LastUpdated: time.Now(),
 	}
 
 	err = s.AddWithTx(tx, holding)
@@ -86,9 +91,9 @@ func (s *PortfolioHoldingService) ExistsByAssetId(assetId int) (bool, error) {
 
 // Get holding by asset id with tx
 func (s *PortfolioHoldingService) GetByAssetIdWithTx(tx *sql.Tx, assetId int) (*models.PortfolioHolding, error) {
-	query := `SELECT p.id, p.asset_id, p.units_held, p.usd_value FROM portfolio_holding p WHERE p.asset_id = ? LIMIT 1`
+	query := `SELECT p.id, p.asset_id, p.units_held, p.usd_value, p.last_updated FROM portfolio_holding p WHERE p.asset_id = ? LIMIT 1`
 	var holding models.PortfolioHolding
-	err := tx.QueryRow(query, assetId).Scan(&holding.ID, &holding.AssetID, &holding.UnitsHeld, &holding.UsdValue)
+	err := tx.QueryRow(query, assetId).Scan(&holding.ID, &holding.AssetID, &holding.UnitsHeld, &holding.USDValue, &holding.LastUpdated)
 	if err != nil {
 		log.Printf("Error getting holding by asset id: %v \n", err)
 		return nil, err
@@ -98,9 +103,9 @@ func (s *PortfolioHoldingService) GetByAssetIdWithTx(tx *sql.Tx, assetId int) (*
 
 // Get holding by asset id
 func (s *PortfolioHoldingService) GetByAssetId(assetId int) (*models.PortfolioHolding, error) {
-	query := `SELECT p.id, p.asset_id, p.units_held, p.usd_value FROM portfolio_holding p WHERE p.asset_id = ? LIMIT 1`
+	query := `SELECT p.id, p.asset_id, p.units_held, p.usd_value, p.last_updated FROM portfolio_holding p WHERE p.asset_id = ? LIMIT 1`
 	var holding models.PortfolioHolding
-	err := s.DB.QueryRow(query, assetId).Scan(&holding.ID, &holding.AssetID, &holding.UnitsHeld, &holding.UsdValue)
+	err := s.DB.QueryRow(query, assetId).Scan(&holding.ID, &holding.AssetID, &holding.UnitsHeld, &holding.USDValue, &holding.LastUpdated)
 	if err != nil {
 		log.Printf("Error getting holding by asset id: %v \n", err)
 		return nil, err
@@ -110,9 +115,9 @@ func (s *PortfolioHoldingService) GetByAssetId(assetId int) (*models.PortfolioHo
 
 // Add holding with Transaction
 func (s *PortfolioHoldingService) AddWithTx(tx *sql.Tx, pModel *models.PortfolioHolding) error {
-	query := `INSERT INTO portfolio_holding (asset_id, units_held, usd_value) values (?, ?, ?)`
+	query := `INSERT INTO portfolio_holding (asset_id, units_held, usd_value, last_updated) values (?, ?, ?, ?, ?)`
 
-	_, err := tx.Exec(query, pModel.AssetID, pModel.UnitsHeld, pModel.UsdValue)
+	_, err := tx.Exec(query, pModel.AssetID, pModel.UnitsHeld, pModel.USDValue, pModel.LastUpdated)
 	if err != nil {
 		log.Printf("Error inserting portfolio_holding: %v \n", err)
 		return err
@@ -122,8 +127,8 @@ func (s *PortfolioHoldingService) AddWithTx(tx *sql.Tx, pModel *models.Portfolio
 
 // Add holding
 func (s *PortfolioHoldingService) Add(pModel *models.PortfolioHolding) error {
-	query := `INSERT INTO portfolio_holding (asset_id, units_held, usd_value) values (?, ?, ?)`
-	_, err := s.DB.Exec(query, pModel.AssetID, pModel.UnitsHeld, pModel.UsdValue)
+	query := `INSERT INTO portfolio_holding (asset_id, units_held, usd_value, last_updated) values (?, ?, ?, ?, ?)`
+	_, err := s.DB.Exec(query, pModel.AssetID, pModel.UnitsHeld, pModel.USDValue, pModel.LastUpdated)
 	if err != nil {
 		log.Printf("Error inserting portfolio_holding: %v \n", err)
 		return err
@@ -133,8 +138,8 @@ func (s *PortfolioHoldingService) Add(pModel *models.PortfolioHolding) error {
 
 // Update holding with transaction
 func (s *PortfolioHoldingService) UpdateWithTx(tx *sql.Tx, pModel *models.PortfolioHolding) error {
-	query := `UPDATE portfolio_holding SET asset_id = ?, units_held = ?, usd_value = ? WHERE id = ?`
-	_, err := tx.Exec(query, pModel.AssetID, pModel.UnitsHeld, pModel.UsdValue, pModel.ID)
+	query := `UPDATE portfolio_holding SET asset_id = ?, units_held = ?, usd_value = ?, last_updated = ? WHERE id = ?`
+	_, err := tx.Exec(query, pModel.AssetID, pModel.UnitsHeld, pModel.USDValue, pModel.LastUpdated, pModel.ID)
 	if err != nil {
 		log.Printf("Error updating portfolio_holding: %v \n", err)
 		return err
@@ -144,11 +149,73 @@ func (s *PortfolioHoldingService) UpdateWithTx(tx *sql.Tx, pModel *models.Portfo
 
 // Update holding
 func (s *PortfolioHoldingService) Update(pModel *models.PortfolioHolding) error {
-	query := `UPDATE portfolio_holding SET asset_id = ?, units_held = ?, usd_value = ? WHERE id = ?`
-	_, err := s.DB.Exec(query, pModel.AssetID, pModel.UnitsHeld, pModel.UsdValue, pModel.ID)
+	query := `UPDATE portfolio_holding SET asset_id = ?, units_held = ?, usd_value = ?, last_updated = ? WHERE id = ?`
+	_, err := s.DB.Exec(query, pModel.AssetID, pModel.UnitsHeld, pModel.USDValue, pModel.LastUpdated, pModel.ID)
 	if err != nil {
 		log.Printf("Error updating portfolio_holding: %v \n", err)
 		return err
 	}
 	return nil
+}
+
+func (s *PortfolioHoldingService) GetUpdatedPortfolio() (*models.Portfolio, error) {
+	// Get all holdings
+	holdings, err := s.GetAllHoldings()
+	if err != nil {
+		return nil, err
+	}
+	// Calculate their value
+	var USDtotal float64
+	USDtotal = 0
+	for _, holding := range holdings {
+		if holding.LastUpdated.Sub(time.Now().AddDate(0, 0, -1)) < 0 {
+			// Update
+		}
+		USDtotal += holding.USDValue
+	}
+
+	// Calculate the % of the portfolio they represent
+	var entries []models.PortfolioEntry
+	for _, holding := range holdings {
+		entry := models.PortfolioEntry{
+			Symbol:          holding.Symbol,
+			USDValue:        holding.USDValue,
+			Units:           holding.UnitsHeld,
+			TotalPercentage: holding.USDValue / (USDtotal / 100),
+		}
+		entries = append(entries, entry)
+	}
+	portfolio := &models.Portfolio{
+		Entries:      entries,
+		TotalHolding: USDtotal,
+	}
+	// Return Symbol, Units, Value, Percentage, TargetPercentage
+	return portfolio, nil
+}
+
+func (s *PortfolioHoldingService) GetAllHoldings() ([]models.HoldingModel, error) {
+	query := `SELECT p.id, a.symbol, a.asset_type, p.units_held, p.usd_value, p.last_updated FROM portfolio_holding p
+			  INNER JOIN asset a ON a.id = p.asset_id`
+
+	var holdings []models.HoldingModel
+
+	rows, err := s.DB.Query(query)
+	if err != nil {
+		return nil, fmt.Errorf("Failed to query portfolio holdings: %v", err)
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var h models.HoldingModel
+		if err := rows.Scan(&h.ID, &h.Symbol, &h.AssetType, &h.UnitsHeld, &h.USDValue, &h.LastUpdated); err != nil {
+			return nil, fmt.Errorf("Failed to scan row: %v", err)
+		}
+		holdings = append(holdings, h)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("Error during row iteration: %v", err)
+	}
+
+	return holdings, nil
 }

@@ -44,11 +44,21 @@ func HandleCommand(application *app.App) {
 			return
 		}
 	case "transact":
-		// TODO
+		err := newTransaction(application)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
 	case "pfolio-status":
 		// TODO
+		// Refresh all values
+		// Check flags
+		// Show a list of assets I hold w their value and % they represent with the intended %
 	case "raise-flags":
 		// TODO
+		// Refresh all values
+		// Check flags
+		// Show a list of assets I should buy with their flags
 	default:
 		fmt.Println("Command not found")
 	}
@@ -132,5 +142,40 @@ func newObjective(application *app.App) error {
 	if err != nil {
 		return fmt.Errorf("Error creating asset objective: %v", err)
 	}
+	return nil
+}
+
+func newTransaction(application *app.App) error {
+	if len(os.Args) < 6 {
+		return fmt.Errorf("Example usage: transact <symbol> <type> <Value in USD> <Units bought>")
+	}
+	symbol := os.Args[2]
+	transType := os.Args[3]
+	if transType != "BUY" && transType != "SELL" {
+		return fmt.Errorf("Type must be either BUY or SELL")
+	}
+	valueUsd, err := strconv.ParseFloat(os.Args[4], 64)
+	if err != nil {
+		return fmt.Errorf("Error parsing value in USD from input: %v", err)
+	}
+
+	units, err := strconv.ParseFloat(os.Args[5], 64)
+	if err != nil {
+		return fmt.Errorf("Error parsing value in USD from input: %v", err)
+	}
+
+	unitPrice := valueUsd / units
+	createModel := &models.AssetTransactionCreate{
+		Symbol:    symbol,
+		Type:      transType,
+		ValueUSD:  valueUsd,
+		Units:     units,
+		UnitPrice: unitPrice,
+	}
+	err = application.AssetTransactionService.SaveAssetTransaction(createModel)
+	if err != nil {
+		return fmt.Errorf("Error saving transaction: %v", err)
+	}
+
 	return nil
 }

@@ -57,15 +57,16 @@ func (ao AssetObjective) String() string {
 
 // PortfolioHolding model
 type PortfolioHolding struct {
-	ID        int     `json:"id" db:"id"`
-	AssetID   int     `json:"asset_id" db:"asset_id"` // Foreign key to Asset table
-	UnitsHeld float64 `json:"units_held" db:"units_held"`
-	UsdValue  float64 `json:"usd_value" db:"usd_value"`
+	ID          int       `json:"id" db:"id"`
+	AssetID     int       `json:"asset_id" db:"asset_id"` // Foreign key to Asset table
+	UnitsHeld   float64   `json:"units_held" db:"units_held"`
+	USDValue    float64   `json:"usd_value" db:"usd_value"`
+	LastUpdated time.Time `json:"last_updated" db:"last_updated"`
 }
 
 func (pe PortfolioHolding) String() string {
-	return fmt.Sprintf("PortfolioHolding[ID: %d, AssetID: %d, UnitsHeld: %.2f, USDValue: %.2f]",
-		pe.ID, pe.AssetID, pe.UnitsHeld, pe.UsdValue)
+	return fmt.Sprintf("PortfolioHolding[ID: %d, AssetID: %d, UnitsHeld: %.2f, USDValue: %.2f, LastUpdated: %s]",
+		pe.ID, pe.AssetID, pe.UnitsHeld, pe.USDValue, pe.LastUpdated)
 }
 
 // AssetTransaction model
