@@ -138,7 +138,7 @@ func newObjective(application *app.App) error {
 		Symbol:                     symbol,
 		TargetAllocationPercentage: taocVal,
 	}
-	err = application.AssetObjectiveService.CreateAssetObjective(createModel)
+	err = application.PortfolioHoldingService.CreateAssetObjective(createModel)
 	if err != nil {
 		return fmt.Errorf("Error creating asset objective: %v", err)
 	}

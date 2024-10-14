@@ -5,5 +5,6 @@ CREATE TABLE IF NOT EXISTS portfolio_holding (
     units_held REAL NOT NULL,
     usd_value REAL NOT NULL,
     last_updated TEXT NOT NULL,
+    target_pp REAL NOT NULL,
     FOREIGN KEY (asset_id) REFERENCES asset(id)
 );

@@ -30,14 +30,15 @@ type HoldingModel struct {
 	UnitsHeld   float64   `json:"units_held" db:"units_held"`
 	USDValue    float64   `json:"usd_value" db:"usd_value"`
 	LastUpdated time.Time `json:"last_updated" db:"last_updated"`
+	TargetPp    float64   `json:"target_pp" db:"target_pp"`
 }
 
 type PortfolioEntry struct {
-	Symbol              string  `json:"symbol" db:"symbol"`
-	USDValue            float64 `json:"usd_value" db:"usd_value"`
-	Units               float64 `json:"units" db:"units"`
-	TotalPercentage     float64 `json:"total_percentage" db:"total_percentage"`
-	ObjectivePercentage float64 `json:"objective_percentage" db:"objective_percentage"`
+	Symbol          string  `json:"symbol" db:"symbol"`
+	USDValue        float64 `json:"usd_value" db:"usd_value"`
+	Units           float64 `json:"units" db:"units"`
+	TotalPercentage float64 `json:"total_percentage" db:"total_percentage"`
+	TargetPp        float64 `json:"target_pp" db:"target_pp"`
 }
 
 type Portfolio struct {
@@ -62,8 +63,8 @@ func (p Portfolio) String() string {
 	return fmt.Sprintf("Portfolio:\n Entries: %s,\n Total: %.2f", p.Entries, p.TotalHolding)
 }
 func (pe PortfolioEntry) String() string {
-	return fmt.Sprintf("PortfolioEntry: [Symbol: %s, USDValue: %.2f, Units: %.2f, TotalPercentage: %.2f, ObjectivePercentage: %.2f",
-		pe.Symbol, pe.USDValue, pe.Units, pe.TotalPercentage, pe.ObjectivePercentage)
+	return fmt.Sprintf("PortfolioEntry: [Symbol: %s, USDValue: %.2f, Units: %.2f, TotalPercentage: %.2f, TargetPp: %.2f,",
+		pe.Symbol, pe.USDValue, pe.Units, pe.TotalPercentage, pe.TargetPp)
 }
 
 func (alv AssetLatestValue) String() string {
@@ -83,6 +84,6 @@ func (atc AssetTransactionCreate) String() string {
 }
 
 func (hm HoldingModel) String() string {
-	return fmt.Sprintf("HoldingModel:\nId: %d,\nSymbol: %s,\nAssetType: %s,\nUnitsHeld: %.2f,\nUSDValue: %.2f,\nLastUpdated: %s",
-		hm.ID, hm.Symbol, hm.AssetType, hm.UnitsHeld, hm.USDValue, hm.LastUpdated)
+	return fmt.Sprintf("HoldingModel:\nId: %d,\nSymbol: %s,\nAssetType: %s,\nUnitsHeld: %.2f,\nUSDValue: %.2f,\nLastUpdated: %s,\nTargetPp: %.2f",
+		hm.ID, hm.Symbol, hm.AssetType, hm.UnitsHeld, hm.USDValue, hm.LastUpdated, hm.TargetPp)
 }

@@ -43,18 +43,6 @@ func (as AssetSnapshot) String() string {
 		as.ID, as.AssetID, as.MetricValue, as.MetricTypeID, as.CurrentValue, as.DateTaken.Format("2006-01-02 15:04:05"))
 }
 
-// AssetObjective model
-type AssetObjective struct {
-	ID                         int     `json:"id" db:"id"`
-	AssetID                    int     `json:"asset_id" db:"asset_id"` // Foreign key to Asset table
-	TargetAllocationPercentage float64 `json:"target_allocation_percentage" db:"target_allocation_percentage"`
-}
-
-func (ao AssetObjective) String() string {
-	return fmt.Sprintf("AssetObjective[ID: %d, AssetID: %d, TargetAllocationPercentage: %.2f%%]",
-		ao.ID, ao.AssetID, ao.TargetAllocationPercentage)
-}
-
 // PortfolioHolding model
 type PortfolioHolding struct {
 	ID          int       `json:"id" db:"id"`
@@ -62,11 +50,12 @@ type PortfolioHolding struct {
 	UnitsHeld   float64   `json:"units_held" db:"units_held"`
 	USDValue    float64   `json:"usd_value" db:"usd_value"`
 	LastUpdated time.Time `json:"last_updated" db:"last_updated"`
+	TargetPp    float64   `json:"target_pp" db:"target_pp"`
 }
 
 func (pe PortfolioHolding) String() string {
-	return fmt.Sprintf("PortfolioHolding[ID: %d, AssetID: %d, UnitsHeld: %.2f, USDValue: %.2f, LastUpdated: %s]",
-		pe.ID, pe.AssetID, pe.UnitsHeld, pe.USDValue, pe.LastUpdated)
+	return fmt.Sprintf("PortfolioHolding[ID: %d, AssetID: %d, UnitsHeld: %.2f, USDValue: %.2f, LastUpdated: %s, TargetPercentage: %.2f]",
+		pe.ID, pe.AssetID, pe.UnitsHeld, pe.USDValue, pe.LastUpdated, pe.TargetPp)
 }
 
 // AssetTransaction model

@@ -12,6 +12,7 @@ type App struct {
 	AssetService            *services.AssetService
 	AssetObjectiveService   *services.AssetObjectiveService
 	AssetTransactionService *services.AssetTransactionService
+	PortfolioHoldingService *services.PortfolioHoldingService
 	DB                      *sql.DB
 }
 
@@ -37,6 +38,7 @@ func NewApp() (*App, error) {
 		AssetService:            stockService,
 		AssetObjectiveService:   assetObjectiveService,
 		AssetTransactionService: assetTransactionService,
+		PortfolioHoldingService: portfolioHoldingService,
 		DB:                      database,
 	}, nil
 }
