@@ -31,6 +31,12 @@ func HandleCommand(application *app.App) {
 			fmt.Println(err)
 			return
 		}
+	case "get-assets":
+		err := getAssets(application)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
 	case "search-stock":
 		err := searchStock()
 		if err != nil {
@@ -50,15 +56,11 @@ func HandleCommand(application *app.App) {
 			return
 		}
 	case "pfolio-status":
-		// TODO
-		// Refresh all values
-		// Check flags
-		// Show a list of assets I hold w their value and % they represent with the intended %
-	case "raise-flags":
-		// TODO
-		// Refresh all values
-		// Check flags
-		// Show a list of assets I should buy with their flags
+		err := getPortfolioStatus(application)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
 	default:
 		fmt.Println("Command not found")
 	}
@@ -106,6 +108,18 @@ func getAsset(application *app.App) error {
 	}
 	fmt.Printf("Asset for %s:\n", symbol)
 	fmt.Println(asset)
+	return nil
+}
+
+func getAssets(application *app.App) error {
+	assets, err := application.AssetService.GetAssets()
+	if err != nil {
+		return err
+	}
+	fmt.Println("Assets:")
+	for _, asset := range assets {
+		fmt.Printf("%v \n", asset)
+	}
 	return nil
 }
 
@@ -177,5 +191,16 @@ func newTransaction(application *app.App) error {
 		return fmt.Errorf("Error saving transaction: %v", err)
 	}
 
+	fmt.Println("Transaction created")
+	return nil
+}
+
+func getPortfolioStatus(application *app.App) error {
+	pfolio, err := application.PortfolioHoldingService.GetUpdatedPortfolio()
+	if err != nil {
+		fmt.Printf("%v \n", err)
+		return fmt.Errorf("Error getting the updated portfolio")
+	}
+	fmt.Printf(pfolio.String() + "\n")
 	return nil
 }

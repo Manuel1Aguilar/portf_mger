@@ -51,7 +51,7 @@ func (s *AssetTransactionService) Add(transaction *models.AssetTransaction) erro
 func (s *AssetTransactionService) SanitizeAssetTransactionCreationModel(
 	tModel *models.AssetTransactionCreate) (*models.AssetTransaction, error) {
 	// Get Asset id
-	query := `SELECT TOP 1 id FROM asset WHERE symbol = ?`
+	query := `SELECT id FROM asset WHERE symbol = ? LIMIT 1`
 	var assetId int
 	err := s.DB.QueryRow(query, tModel.Symbol).Scan(&assetId)
 	if err != nil {

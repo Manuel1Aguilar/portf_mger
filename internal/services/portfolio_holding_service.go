@@ -6,6 +6,7 @@ import (
 	"log"
 	"time"
 
+	"github.com/Manuel1Aguilar/portf_mger/internal/api"
 	"github.com/Manuel1Aguilar/portf_mger/internal/models"
 )
 
@@ -94,9 +95,17 @@ func (s *PortfolioHoldingService) ExistsByAssetId(assetId int) (bool, error) {
 func (s *PortfolioHoldingService) GetByAssetIdWithTx(tx *sql.Tx, assetId int) (*models.PortfolioHolding, error) {
 	query := `SELECT p.id, p.asset_id, p.units_held, p.usd_value, p.last_updated, p.target_pp FROM portfolio_holding p WHERE p.asset_id = ? LIMIT 1`
 	var holding models.PortfolioHolding
-	err := tx.QueryRow(query, assetId).Scan(&holding.ID, &holding.AssetID, &holding.UnitsHeld, &holding.USDValue, &holding.LastUpdated, &holding.TargetPp)
+	var lastUpdatedStr string
+	err := tx.QueryRow(query, assetId).Scan(&holding.ID, &holding.AssetID, &holding.UnitsHeld, &holding.USDValue,
+		&lastUpdatedStr, &holding.TargetPp)
 	if err != nil {
 		log.Printf("Error getting holding by asset id: %v \n", err)
+		return nil, err
+	}
+
+	holding.LastUpdated, err = time.Parse("2006-01-02 15:04:05.999999999-07:00", lastUpdatedStr)
+	if err != nil {
+		fmt.Printf("Error parsing last updated holding time: %v \n", err)
 		return nil, err
 	}
 	return &holding, nil
@@ -116,7 +125,7 @@ func (s *PortfolioHoldingService) GetByAssetId(assetId int) (*models.PortfolioHo
 
 // Add holding with Transaction
 func (s *PortfolioHoldingService) AddWithTx(tx *sql.Tx, pModel *models.PortfolioHolding) error {
-	query := `INSERT INTO portfolio_holding (asset_id, units_held, usd_value, last_updated, target_pp) values (?, ?, ?, ?, ?, ?)`
+	query := `INSERT INTO portfolio_holding (asset_id, units_held, usd_value, last_updated, target_pp) values (?, ?, ?, ?, ?)`
 
 	_, err := tx.Exec(query, pModel.AssetID, pModel.UnitsHeld, pModel.USDValue, pModel.LastUpdated, pModel.TargetPp)
 	if err != nil {
@@ -128,7 +137,7 @@ func (s *PortfolioHoldingService) AddWithTx(tx *sql.Tx, pModel *models.Portfolio
 
 // Add holding
 func (s *PortfolioHoldingService) Add(pModel *models.PortfolioHolding) error {
-	query := `INSERT INTO portfolio_holding (asset_id, units_held, usd_value, last_updated, target_pp) values (?, ?, ?, ?, ?, ?)`
+	query := `INSERT INTO portfolio_holding (asset_id, units_held, usd_value, last_updated, target_pp) values (?, ?, ?, ?, ?)`
 	_, err := s.DB.Exec(query, pModel.AssetID, pModel.UnitsHeld, pModel.USDValue, pModel.LastUpdated, pModel.TargetPp)
 	if err != nil {
 		log.Printf("Error inserting portfolio_holding: %v \n", err)
@@ -171,6 +180,11 @@ func (s *PortfolioHoldingService) GetUpdatedPortfolio() (*models.Portfolio, erro
 	for _, holding := range holdings {
 		if holding.USDValue > 0 && holding.LastUpdated.Sub(time.Now().AddDate(0, 0, -1)) < 0 {
 			// Update
+			updatedModel, err := api.FetchLatestStockValue(holding.Symbol)
+			if err != nil {
+				return nil, err
+			}
+			holding.USDValue = holding.UnitsHeld * updatedModel.Value
 		}
 		USDtotal += holding.USDValue
 	}
@@ -209,8 +223,13 @@ func (s *PortfolioHoldingService) GetAllHoldings() ([]models.HoldingModel, error
 
 	for rows.Next() {
 		var h models.HoldingModel
-		if err := rows.Scan(&h.ID, &h.Symbol, &h.AssetType, &h.UnitsHeld, &h.USDValue, &h.LastUpdated, &h.TargetPp); err != nil {
+		var lastUpdatedStr string
+		if err := rows.Scan(&h.ID, &h.Symbol, &h.AssetType, &h.UnitsHeld, &h.USDValue, &lastUpdatedStr, &h.TargetPp); err != nil {
 			return nil, fmt.Errorf("Failed to scan row: %v", err)
+		}
+		h.LastUpdated, err = time.Parse("2006-01-02 15:04:05.999999999-07:00", lastUpdatedStr)
+		if err != nil {
+			return nil, fmt.Errorf("Failed to parse rows last updated time: %v \n", err)
 		}
 		holdings = append(holdings, h)
 	}

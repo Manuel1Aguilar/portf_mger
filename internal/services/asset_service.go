@@ -50,7 +50,6 @@ func (s *AssetService) CreateAsset(asset *models.Asset) error {
 func (s *AssetService) GetAssetBySymbol(symbol string) (*models.Asset, error) {
 	query := `SELECT a.id, a.symbol, a.description, a.asset_type FROM asset a
               WHERE a.symbol = ?`
-	log.Printf("Query: %s", query)
 	row := s.DB.QueryRow(query, symbol)
 
 	var stockSnapshot models.Asset
@@ -59,4 +58,27 @@ func (s *AssetService) GetAssetBySymbol(symbol string) (*models.Asset, error) {
 		return nil, err
 	}
 	return &stockSnapshot, nil
+}
+
+func (s *AssetService) GetAssets() ([]models.Asset, error) {
+	query := `SELECT a.id, a.symbol, a.description, a.asset_type FROM asset a`
+	rows, err := s.DB.Query(query)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var assets []models.Asset
+	for rows.Next() {
+		var asset models.Asset
+		err := rows.Scan(&asset.ID, &asset.Symbol, &asset.Description, &asset.AssetType)
+		if err != nil {
+			return nil, err
+		}
+		assets = append(assets, asset)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+	return assets, nil
 }

@@ -14,7 +14,7 @@ type Asset struct {
 }
 
 func (a Asset) String() string {
-	return fmt.Sprintf("Asset[ID: %d, Symbol: %s, Description: %s, Type: %s]", a.ID, a.Symbol, a.Description, a.AssetType)
+	return fmt.Sprintf("[ID: %d, Symbol: %s, Description: %s, Type: %s]", a.ID, a.Symbol, a.Description, a.AssetType)
 }
 
 // MetricType model
@@ -25,7 +25,7 @@ type MetricType struct {
 }
 
 func (mt MetricType) String() string {
-	return fmt.Sprintf("MetricType[ID: %d, TypeName: %s, Description: %s]", mt.ID, mt.TypeName, mt.Description)
+	return fmt.Sprintf("[ID: %d, TypeName: %s, Description: %s]", mt.ID, mt.TypeName, mt.Description)
 }
 
 // AssetSnapshot model
@@ -39,7 +39,7 @@ type AssetSnapshot struct {
 }
 
 func (as AssetSnapshot) String() string {
-	return fmt.Sprintf("AssetSnapshot[ID: %d, AssetID: %d, MetricValue: %.2f, MetricTypeID: %d, CurrentValue: %.2f, DateTaken: %s]",
+	return fmt.Sprintf("[ID: %d, AssetID: %d, MetricValue: %.2f, MetricTypeID: %d, CurrentValue: %.2f, DateTaken: %s]",
 		as.ID, as.AssetID, as.MetricValue, as.MetricTypeID, as.CurrentValue, as.DateTaken.Format("2006-01-02 15:04:05"))
 }
 
@@ -54,7 +54,7 @@ type PortfolioHolding struct {
 }
 
 func (pe PortfolioHolding) String() string {
-	return fmt.Sprintf("PortfolioHolding[ID: %d, AssetID: %d, UnitsHeld: %.2f, USDValue: %.2f, LastUpdated: %s, TargetPercentage: %.2f]",
+	return fmt.Sprintf("[ID: %d, AssetID: %d, UnitsHeld: %.2f, USDValue: %.2f, LastUpdated: %s, TargetPercentage: %.2f]",
 		pe.ID, pe.AssetID, pe.UnitsHeld, pe.USDValue, pe.LastUpdated, pe.TargetPp)
 }
 
@@ -70,6 +70,6 @@ type AssetTransaction struct {
 }
 
 func (t AssetTransaction) String() string {
-	return fmt.Sprintf("AssetTransaction[ID: %d, AssetID: %d, Type: %s, ValueUSD: %.2f, Units: %.2f, UnitPrice: %.2f, DateTransacted: %s]",
+	return fmt.Sprintf("[ID: %d, AssetID: %d, Type: %s, ValueUSD: %.2f, Units: %.2f, UnitPrice: %.2f, DateTransacted: %s]",
 		t.ID, t.AssetID, t.TransactionType, t.ValueUSD, t.Units, t.UnitPrice, t.DateTransacted.Format("2006-01-02 15:04:05"))
 }
