@@ -43,14 +43,14 @@ func HandleCommand(application *app.App) {
 			fmt.Println(err)
 			return
 		}
-	case "new-objective":
-		err := newObjective(application)
+	case "set-objective":
+		err := setObjective(application)
 		if err != nil {
 			fmt.Println(err)
 			return
 		}
 	case "transact":
-		err := newTransaction(application)
+		err := transact(application)
 		if err != nil {
 			fmt.Println(err)
 			return
@@ -61,8 +61,11 @@ func HandleCommand(application *app.App) {
 			fmt.Println(err)
 			return
 		}
+	case "help":
+		help()
 	default:
 		fmt.Println("Command not found")
+		help()
 	}
 
 }
@@ -137,9 +140,9 @@ func searchStock() error {
 	return nil
 }
 
-func newObjective(application *app.App) error {
+func setObjective(application *app.App) error {
 	if len(os.Args) < 4 {
-		return fmt.Errorf("Example usage: new-objective <symbol> <target allocation %%>")
+		return fmt.Errorf("Example usage: set-objective <symbol> <target allocation %%>")
 	}
 	symbol := os.Args[2]
 	taoc := os.Args[3]
@@ -159,7 +162,7 @@ func newObjective(application *app.App) error {
 	return nil
 }
 
-func newTransaction(application *app.App) error {
+func transact(application *app.App) error {
 	if len(os.Args) < 6 {
 		return fmt.Errorf("Example usage: transact <symbol> <type> <Value in USD> <Units bought>")
 	}
@@ -203,4 +206,15 @@ func getPortfolioStatus(application *app.App) error {
 	}
 	fmt.Printf(pfolio.String() + "\n")
 	return nil
+}
+
+func help() {
+	fmt.Println("Available Commands:")
+	fmt.Println("add-asset <symbol> <description> <type> ; E.g.: add-asset NVDA Nvidia STOCK; Types: STOCK/CRYPTO")
+	fmt.Println("get-asset <symbol>")
+	fmt.Println("get-assets")
+	fmt.Println("search-stock <symbol>")
+	fmt.Println("set-objective <symbol> <target allocation %>")
+	fmt.Println("transact <symbol> <type> <value in USD> <units bought>")
+	fmt.Println("pfolio-status")
 }

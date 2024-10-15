@@ -60,11 +60,19 @@ type AssetLatestValue struct {
 }
 
 func (p Portfolio) String() string {
-	return fmt.Sprintf("Portfolio:\n Entries: %s,\n Total: %.2f", p.Entries, p.TotalHolding)
+	return fmt.Sprintf("Entries: %s,\n Total: $%.2f", p.Entries, p.TotalHolding)
 }
 func (pe PortfolioEntry) String() string {
-	return fmt.Sprintf("PortfolioEntry: [Symbol: %s, USDValue: %.2f, Units: %.2f, TotalPercentage: %.2f, TargetPp: %.2f,",
-		pe.Symbol, pe.USDValue, pe.Units, pe.TotalPercentage, pe.TargetPp)
+	var action string
+	if pe.TargetPp < pe.TotalPercentage {
+		action = "BUY"
+	} else if pe.TargetPp > pe.TotalPercentage {
+		action = "SELL"
+	} else {
+		action = "HOLD"
+	}
+	return fmt.Sprintf("\n[Symbol: %s, USDValue: %.2f, Units: %.2f, TotalPercentage: %.2f, TargetPp: %.2f, Action: %s]",
+		pe.Symbol, pe.USDValue, pe.Units, pe.TotalPercentage, pe.TargetPp, action)
 }
 
 func (alv AssetLatestValue) String() string {

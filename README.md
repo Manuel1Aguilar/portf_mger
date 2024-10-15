@@ -23,10 +23,22 @@ Adds an asset to be tracked by the portfolio manager. This asset will be added t
 
 Gets the saved asset object (symbol, description and type) in the database if it exists
 
+### get-assets: Example usae "get-assets"
+
+Gets all the saved asset objects (symbol, description and type that exist in the database
+
 ### search-stock: Example usage "search-stock <symbol>"
 
 Searches current stock value and calculates 200 weeks moving average for the stock of the corresponding symbol. Doesn't retrieve nor save anything from or to the database.
 
-### set-objective: Example usage "new-objective <symbol> <target allocation %>"
+### set-objective: Example usage "set-objective <symbol> <target allocation %>"
 
 Creates or updates the target allocation percentage for a given asset on the portfolio. E.g. if the current amount of NVDA stock represents 10% of the portfolio and the objective is 15% on the next update the NVDA stock is near it's 200 week moving average a flag to buy will be raised.
+
+### transact: Example usage "transact <symbol> <type> <value in USD> <units bought>"
+
+Creates a new transaction for the asset corresponding to the symbol. Type can be either BUY or SELL. This also updates the portfolio holding for this asset
+
+### pfolio-status: Example usage "pfolio-status"
+
+Gets the current portfolio status. It first updates all the holdings with the current value for the asset and calculates the percentages.

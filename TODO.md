@@ -19,14 +19,12 @@
 ### 4. Calculate 200 MA
 - [x] Write a function to calculate the 200-week moving average (MA) for a stock.
 - [x] Display the 200 MA value for a searched stock.
-- [ ] Flag stocks that are near or below their 200 MA for buying opportunities.
 
 ### 5. Add Tasks
-- [ ] Implement portfolio management logic to track investments and percentage allocation per stock.
-- [ ] Allow the user to assign objective percentages for each stock in the portfolio.
-- [ ] Write a rebalancing function that checks if the current allocation matches the objective.
-- [ ] Store portfolio data (current and objective percentages) in SQLite.
-- [ ] Display portfolio balance and flags for rebalancing.
+- [x] Implement portfolio management logic to track investments and percentage allocation per stock.
+- [x] Allow the user to assign objective percentages for each stock in the portfolio.
+- [x] Store portfolio data (current and objective percentages) in SQLite.
+- [x] Display portfolio balance and flags for rebalancing.
 
 ---
 
@@ -37,8 +35,8 @@
 - [ ] Define tolerances for buying on MA
 
 ### commands to do:
-- [ ] See portfolio
+- [x] See portfolio
 - [ ] See portfolio progression
-- [ ] Create transaction
-- [ ] Add portfolio objective
+- [x] Create transaction
+- [x] Add portfolio objective
 - [ ] Save/See metric types
