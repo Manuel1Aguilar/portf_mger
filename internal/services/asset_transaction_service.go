@@ -6,6 +6,7 @@ import (
 	"log"
 	"time"
 
+	"github.com/Manuel1Aguilar/portf_mger/internal/api"
 	"github.com/Manuel1Aguilar/portf_mger/internal/models"
 )
 
@@ -57,11 +58,12 @@ func (s *AssetTransactionService) SanitizeAssetTransactionCreationModel(
 	if err != nil {
 		return nil, fmt.Errorf("Error getting asset by symbol: %v", err)
 	}
-	// If valueUSD != units * unit_price return err
-	if tModel.ValueUSD != tModel.Units*tModel.UnitPrice {
-		return nil, fmt.Errorf("Check that the total amount of the transaction corresponds with the\n" +
-			"number of units and unit price inputted")
+	// Get actual price from the api
+	assetValue, err := api.FetchLatestStockValue(tModel.Symbol)
+	if err != nil {
+		return nil, err
 	}
+
 	// If transaction_type != BUY || SELL return err
 	if tModel.Type != "BUY" && tModel.Type != "SELL" {
 		return nil, fmt.Errorf("Couldn't parse type, should be either BUY or SELL")
@@ -71,9 +73,9 @@ func (s *AssetTransactionService) SanitizeAssetTransactionCreationModel(
 	entity := &models.AssetTransaction{
 		AssetID:         assetId,
 		TransactionType: tModel.Type,
-		ValueUSD:        tModel.ValueUSD,
+		ValueUSD:        assetValue.Value * tModel.Units,
 		Units:           tModel.Units,
-		UnitPrice:       tModel.UnitPrice,
+		UnitPrice:       assetValue.Value,
 		DateTransacted:  time.Now(),
 	}
 	return entity, nil

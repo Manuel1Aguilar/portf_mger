@@ -47,11 +47,9 @@ type Portfolio struct {
 }
 
 type AssetTransactionCreate struct {
-	Symbol    string  `json:"symbol"`
-	Type      string  `json:"type"`
-	ValueUSD  float64 `json:"valueUSD"`
-	Units     float64 `json:"units"`
-	UnitPrice float64 `json:"unit_price"`
+	Symbol string  `json:"symbol"`
+	Type   string  `json:"type"`
+	Units  float64 `json:"units"`
 }
 
 type AssetLatestValue struct {
@@ -71,7 +69,7 @@ func (pe PortfolioEntry) String() string {
 	} else {
 		action = "HOLD"
 	}
-	return fmt.Sprintf("\n[Symbol: %s, USDValue: %.2f, Units: %.2f, TotalPercentage: %.2f, TargetPp: %.2f, Action: %s]",
+	return fmt.Sprintf("\n[Symbol: %s, USDValue: %.4f, Units: %.4f, TotalPercentage: %.2f, TargetPp: %.2f, Action: %s]",
 		pe.Symbol, pe.USDValue, pe.Units, pe.TotalPercentage, pe.TargetPp, action)
 }
 
@@ -86,9 +84,8 @@ func (aoc AssetObjectiveCreate) String() string {
 }
 
 func (atc AssetTransactionCreate) String() string {
-	return fmt.Sprintf("AssetTransactionCreate:\nSymbol: %s,\nType: %s,\nValueUSD: %.2f,\nUnits: %.2f,\n"+
-		"UnitPrice: %.2f",
-		atc.Symbol, atc.Type, atc.ValueUSD, atc.Units, atc.UnitPrice)
+	return fmt.Sprintf("AssetTransactionCreate:\nSymbol: %s,\nType: %s,\nUnits: %.2f,\n",
+		atc.Symbol, atc.Type, atc.Units)
 }
 
 func (hm HoldingModel) String() string {

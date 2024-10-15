@@ -163,31 +163,24 @@ func setObjective(application *app.App) error {
 }
 
 func transact(application *app.App) error {
-	if len(os.Args) < 6 {
-		return fmt.Errorf("Example usage: transact <symbol> <type> <Value in USD> <Units bought>")
+	if len(os.Args) < 5 {
+		return fmt.Errorf("Example usage: transact <symbol> <type> <Units bought>")
 	}
 	symbol := os.Args[2]
 	transType := os.Args[3]
 	if transType != "BUY" && transType != "SELL" {
 		return fmt.Errorf("Type must be either BUY or SELL")
 	}
-	valueUsd, err := strconv.ParseFloat(os.Args[4], 64)
+
+	units, err := strconv.ParseFloat(os.Args[4], 64)
 	if err != nil {
 		return fmt.Errorf("Error parsing value in USD from input: %v", err)
 	}
 
-	units, err := strconv.ParseFloat(os.Args[5], 64)
-	if err != nil {
-		return fmt.Errorf("Error parsing value in USD from input: %v", err)
-	}
-
-	unitPrice := valueUsd / units
 	createModel := &models.AssetTransactionCreate{
-		Symbol:    symbol,
-		Type:      transType,
-		ValueUSD:  valueUsd,
-		Units:     units,
-		UnitPrice: unitPrice,
+		Symbol: symbol,
+		Type:   transType,
+		Units:  units,
 	}
 	err = application.AssetTransactionService.SaveAssetTransaction(createModel)
 	if err != nil {
@@ -215,6 +208,6 @@ func help() {
 	fmt.Println("get-assets")
 	fmt.Println("search-stock <symbol>")
 	fmt.Println("set-objective <symbol> <target allocation %>")
-	fmt.Println("transact <symbol> <type> <value in USD> <units bought>")
+	fmt.Println("transact <symbol> <type> <units bought>")
 	fmt.Println("pfolio-status")
 }
