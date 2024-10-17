@@ -36,7 +36,7 @@ func (s *AssetService) CreateAsset(asset *models.Asset) error {
 
 	// Insert the asset if it does not exist
 	query = `INSERT INTO asset (symbol, description, asset_type) 
-			  VALUES (?, ? ,?)`
+			  VALUES (?, ?, ?)`
 	_, err = s.DB.Exec(query, asset.Symbol, asset.Description, asset.AssetType)
 	if err != nil {
 		log.Printf("Error inserting asset %v", err)
